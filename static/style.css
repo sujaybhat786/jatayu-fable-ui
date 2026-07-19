@@ -1,0 +1,604 @@
+/* ============================================================
+   JATAYU OS — style.css
+   Token system per UI Design Guidelines §1. Color is a state
+   language: ice = at rest, gold = working, crimson = wrong.
+   BattleGround styles are folded in here (battleground.css
+   is not needed as a separate file for this handoff).
+   ============================================================ */
+
+:root {
+  /* -- constants -- */
+  --void: #05060A;
+
+  /* -- ice: primary / idle / at rest -- */
+  --ice: #A9D6FF;
+  --ice-hi: #EAF4FF;
+  --ice-lo: #4C7FA6;
+
+  /* -- gold: active / thinking / responding -- */
+  --gold: #E8B84B;
+  --gold-hi: #FFE9B0;
+  --gold-lo: #8A652A;
+
+  /* -- crimson: alert / degraded / kill-switch -- */
+  --crimson: #E14B4B;
+  --crimson-hi: #FF8080;
+  --crimson-lo: #6E1E1E;
+
+  /* -- pearl: SPEAKING only — white is the voice -- */
+  --pearl: #EDE6D6;
+  --pearl-hi: #FFFFFF;
+  --pearl-lo: #8F887A;
+
+  /* -- chrome: structural, non-state UI -- */
+  --chrome: #6B7280;
+  --chrome-dim: #3A3F4A;
+
+  /* -- live state color: follows body[data-orb-state] --
+     Gold is JATAYU's resting identity. Blue exists only while
+     LISTENING, white only while SPEAKING, crimson only on ALERT. */
+  --state: var(--gold);
+  --state-hi: var(--gold-hi);
+  --state-lo: var(--gold-lo);
+
+  /* -- type -- */
+  --font-ui: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --nav-w: 220px;
+}
+
+/* Only one state color is live at a time. IDLE and THINKING stay gold. */
+body[data-orb-state="LISTENING"] {
+  --state: var(--ice);
+  --state-hi: var(--ice-hi);
+  --state-lo: var(--ice-lo);
+}
+body[data-orb-state="SPEAKING"] {
+  --state: var(--pearl);
+  --state-hi: var(--pearl-hi);
+  --state-lo: var(--pearl-lo);
+}
+body[data-orb-state="ALERT"] {
+  --state: var(--crimson);
+  --state-hi: var(--crimson-hi);
+  --state-lo: var(--crimson-lo);
+}
+
+/* ---------- reset / base ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--void);
+  color: #C9CFDA;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  overflow: hidden;
+}
+
+.mono { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; }
+
+h1, h2, h3, .btn, #nav { font-family: var(--font-ui); }
+
+a { color: inherit; text-decoration: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--chrome-dim); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Accessibility floor: visible focus everywhere (Guidelines §9). */
+:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ---------- app shell ---------- */
+#nav {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--nav-w);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--chrome-dim);
+  background: rgba(5, 6, 10, 0.92);
+  z-index: 40;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--chrome-dim);
+}
+
+.brand-glyph {
+  width: 18px; height: 18px;
+  border: 1px solid var(--state);
+  transform: rotate(45deg);
+  position: relative;
+  transition: border-color 0.6s;
+}
+.brand-glyph::after {
+  content: "";
+  position: absolute; inset: 4px;
+  border-radius: 50%;
+  background: var(--state);
+  opacity: 0.85;
+  transition: background 0.6s;
+}
+
+.brand-name {
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  font-size: 15px;
+  color: #E7ECF4;
+}
+
+.nav-links { display: flex; flex-direction: column; padding: 14px 0; flex: 1; }
+
+.nav-links a {
+  padding: 10px 20px;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  color: var(--chrome);
+  border-left: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-links a:hover { color: #EAE4D6; }
+.nav-links a.active {
+  color: var(--gold-hi);
+  border-left-color: var(--gold);
+}
+
+.nav-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--chrome-dim);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 3px 8px;
+  border: 1px solid var(--chrome-dim);
+  border-radius: 3px;
+  color: var(--chrome);
+  font-size: 10.5px;
+}
+.badge.ok { color: var(--gold); border-color: var(--gold-lo); }
+.badge.warn { color: var(--gold); border-color: var(--gold-lo); }
+.badge.err { color: var(--crimson); border-color: var(--crimson-lo); }
+
+#main { margin-left: var(--nav-w); height: 100vh; position: relative; }
+
+/* ---------- views ---------- */
+.view {
+  display: none;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 36px 44px;
+}
+.view.active { display: block; }
+
+.view-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.view-header h1 { font-size: 26px; font-weight: 500; color: #E7ECF4; }
+.greeting { font-size: 28px; }
+.sub { color: var(--chrome); margin-top: 6px; }
+
+/* ---------- HUD cards (Guidelines §5 — corner brackets echo the cube) ---------- */
+.hud-card {
+  position: relative;
+  border: 1px solid var(--chrome-dim);
+  background: rgba(255, 255, 255, 0.015);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.hud-card::before, .hud-card::after {
+  content: "";
+  position: absolute;
+  width: 10px; height: 10px;
+  border: 1px solid var(--chrome);
+  pointer-events: none;
+}
+.hud-card::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.hud-card::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+.hud-card h2 {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--chrome);
+  margin-bottom: 14px;
+}
+
+.hud-list { list-style: none; }
+.hud-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(107, 114, 128, 0.15);
+  font-size: 13.5px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.hud-list li:last-child { border-bottom: 0; }
+.hud-list .meta { font-family: var(--font-mono); font-size: 11px; color: var(--chrome); margin-left: auto; white-space: nowrap; }
+.hud-list li.empty, .empty-state { color: var(--chrome); font-size: 13px; }
+
+/* priority mapping reuses the state language (Guidelines §5) */
+.prio { width: 6px; height: 6px; border-radius: 50%; flex: none; align-self: center; }
+.prio.high { background: var(--crimson); }
+.prio.medium { background: var(--gold); }
+.prio.low { background: var(--chrome); }
+
+.health-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; align-self: center; background: var(--chrome); }
+.health-dot.healthy { background: var(--gold); box-shadow: 0 0 6px var(--gold-lo); }
+.health-dot.degraded { background: var(--chrome); }
+.health-dot.failed { background: var(--crimson); box-shadow: 0 0 6px var(--crimson-lo); }
+
+/* ---------- dashboard ---------- */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  border: 1px solid var(--chrome-dim);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chrome);
+  font-family: var(--font-ui);
+}
+.stat-value { font-size: 20px; color: #EAE4D6; }
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.panel-grid .wide { grid-column: 1 / -1; }
+
+/* small ambient core glyph — the dashboard's quiet echo of the hero */
+.dash-orb-glyph {
+  width: 52px; height: 52px;
+  border: 1px solid var(--state-lo);
+  transform: rotate(45deg);
+  display: grid;
+  place-items: center;
+  transition: border-color 0.6s;
+}
+.dash-orb-glyph i {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--void) 30%, var(--state) 60%, transparent 75%);
+  box-shadow: 0 0 14px var(--state-lo);
+  animation: glyph-pulse 4s ease-in-out infinite;
+  transition: box-shadow 0.6s;
+}
+@keyframes glyph-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+.def-list dt { color: var(--chrome); margin-top: 10px; font-size: 11px; }
+.def-list dd { color: #C9CFDA; margin-left: 0; font-size: 12.5px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 9px 18px;
+  background: transparent;
+  color: #C9CFDA;
+  border: 1px solid var(--chrome-dim);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn:hover { border-color: var(--gold-lo); color: var(--gold-hi); }
+.btn.primary { border-color: var(--gold-lo); color: var(--gold); }
+.btn.primary:hover { border-color: var(--gold); }
+.btn.icon { padding: 9px 13px; }
+.btn.recording { border-color: var(--crimson); color: var(--crimson); }
+
+/* ============================================================
+   BATTLEGROUND — the hero view. The object is the interface.
+   ============================================================ */
+#view-battleground { padding: 0; overflow: hidden; position: relative; }
+
+#bg-host {
+  position: absolute;
+  inset: 0;
+  background: var(--void);
+}
+#bg-host canvas { display: block; }
+
+/* Static fallback path (no WebGL / low power — Guidelines §8) */
+#bg-host.bg-fallback {
+  display: grid;
+  place-items: center;
+}
+#bg-host.bg-fallback .orb-fallback {
+  width: min(70vw, 640px);
+  aspect-ratio: 16 / 9;
+  background: url("/static/jatayu_emblem.jpg") center / contain no-repeat;
+  filter: drop-shadow(0 0 60px var(--state-lo));
+  transition: filter 0.8s;
+}
+
+.bg-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: block;
+  z-index: 2;
+}
+
+.bg-title {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.bg-title h1 {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  margin-right: -0.42em; /* optically recenter tracked type */
+  color: var(--state-hi);
+  text-shadow: 0 0 24px var(--state-lo);
+  transition: color 0.8s, text-shadow 0.8s;
+}
+.bg-subtitle { margin-top: 8px; color: var(--state); transition: color 0.8s; }
+
+.bg-telemetry {
+  position: absolute;
+  left: 36px;
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--chrome);
+}
+.bg-telemetry div { display: flex; gap: 14px; }
+.t-key { min-width: 150px; color: var(--chrome); }
+.t-val { color: var(--state); transition: color 0.8s; }
+
+.bg-clusters {
+  position: absolute;
+  right: 36px;
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  color: var(--chrome);
+  text-align: left;
+}
+.bg-clusters-title { color: var(--chrome); margin-bottom: 4px; }
+.bg-cluster { display: flex; align-items: center; gap: 10px; }
+.bg-cluster .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--chrome);
+  transition: background 0.5s, box-shadow 0.5s;
+}
+.bg-cluster.healthy .dot { background: var(--state); box-shadow: 0 0 8px var(--state-lo); }
+.bg-cluster.degraded .dot { background: var(--chrome); }
+.bg-cluster.failed .dot { background: var(--crimson); box-shadow: 0 0 8px var(--crimson-lo); }
+.bg-cluster.failed { color: var(--crimson); }
+
+.bg-stage-bottom {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  transform: translateX(-50%);
+  width: min(680px, 84vw);
+  text-align: center;
+}
+
+.bg-transcript {
+  max-height: 180px;
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: 0 8px;
+  mask-image: linear-gradient(to bottom, transparent, black 14%);
+}
+.bg-user-line {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--chrome);
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.bg-user-line:not(:empty)::before { content: "❯ "; color: var(--state); }
+.bg-assistant-text {
+  font-size: 15.5px;
+  color: #DEE6F2;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+  white-space: pre-wrap;
+}
+
+.bg-voice-status {
+  margin-top: 16px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--state);
+  transition: color 0.8s;
+}
+
+/* invisible-but-focusable click target over the orb */
+#orb-button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -54%);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+#orb-button:hover { border-color: rgba(169, 214, 255, 0.12); }
+#orb-button:focus-visible { border-color: var(--ice); outline: none; }
+
+.bg-footer {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--chrome);
+}
+
+/* ---------- chat ---------- */
+#view-chat { padding: 0; }
+.chat-layout { display: flex; height: 100vh; }
+
+.chat-sidebar {
+  width: 264px;
+  flex: none;
+  border-right: 1px solid var(--chrome-dim);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+.chat-search {
+  background: transparent;
+  border: 1px solid var(--chrome-dim);
+  color: var(--chrome);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  padding: 8px 10px;
+}
+.conv-list { list-style: none; overflow-y: auto; flex: 1; }
+.conv-list li {
+  padding: 10px 10px;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.conv-list li:hover { background: rgba(255, 255, 255, 0.03); }
+.conv-list li.active { border-left-color: var(--gold); } /* thin rule, not a fill */
+.conv-title {
+  font-size: 13px;
+  color: #C9CFDA;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.conv-time { font-family: var(--font-mono); font-size: 10.5px; color: var(--chrome); margin-top: 3px; }
+
+.chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.chat-thread { flex: 1; overflow-y: auto; padding: 34px 40px; }
+.chat-empty { color: var(--chrome); text-align: center; margin-top: 18vh; font-size: 14px; }
+
+.msg { display: flex; margin-bottom: 18px; }
+.msg .bubble {
+  max-width: 68%;
+  padding: 11px 15px;
+  font-size: 14.5px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.msg.user { justify-content: flex-end; }
+.msg.user .bubble {
+  border: 1px solid var(--chrome-dim);
+  color: #C9CFDA;
+  background: rgba(107, 114, 128, 0.08);
+}
+.msg.assistant { justify-content: flex-start; gap: 12px; }
+.msg.assistant .avatar {
+  width: 26px; height: 26px;
+  flex: none;
+  border: 1px solid var(--state-lo);
+  transform: rotate(45deg);
+  margin-top: 4px;
+  position: relative;
+  transition: border-color 0.6s;
+}
+.msg.assistant .avatar::after {
+  content: "";
+  position: absolute; inset: 7px;
+  border-radius: 50%;
+  background: var(--state);
+  transition: background 0.6s;
+}
+.msg.assistant .bubble {
+  border-left: 2px solid var(--state);           /* left-edge glow in orb-state color */
+  box-shadow: inset 8px 0 18px -12px var(--state);
+  background: rgba(255, 255, 255, 0.02);
+  color: #DEE6F2;
+  transition: border-color 0.6s, box-shadow 0.6s;
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px 22px;
+  border-top: 1px solid var(--chrome-dim);
+  align-items: flex-end;
+}
+#chat-input {
+  flex: 1;
+  resize: none;
+  background: transparent;
+  border: 1px solid var(--chrome-dim);
+  color: #DEE6F2;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  padding: 10px 14px;
+  max-height: 160px;
+  line-height: 1.5;
+}
+#chat-input:focus { border-color: var(--gold-lo); outline: none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  :root { --nav-w: 0px; }
+  #nav {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    height: 58px;
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-top: 1px solid var(--chrome-dim);
+  }
+  .brand, .nav-footer { display: none; }
+  .nav-links { flex-direction: row; overflow-x: auto; padding: 0 6px; }
+  .nav-links a { padding: 18px 12px; border-left: 0; border-top: 2px solid transparent; white-space: nowrap; min-height: 44px; }
+  .nav-links a.active { border-top-color: var(--gold); border-left-color: transparent; }
+  #main { margin-left: 0; }
+  .view { padding: 24px 18px 80px; }
+  .bg-telemetry, .bg-clusters { display: none; }
+  .chat-sidebar { display: none; }
+}
+
+/* ---------- reduced motion (Guidelines §7): keep the glow, drop the motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

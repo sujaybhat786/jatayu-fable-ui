@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JATAYU — Advanced AGI</title>
+
+  <!-- Typography: interface / body / utility faces -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="/static/style.css" />
+
+  <!-- Three.js via import map (vendor these locally for offline deployments) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body data-orb-state="IDLE">
+
+  <!-- ================= NAVIGATION ================= -->
+  <nav id="nav" aria-label="Primary">
+    <a class="brand" href="#dashboard">
+      <span class="brand-glyph" aria-hidden="true"></span>
+      <span class="brand-name">JATAYU</span>
+    </a>
+    <div class="nav-links">
+      <a href="#dashboard"    data-view="dashboard">Dashboard</a>
+      <a href="#battleground" data-view="battleground">BattleGround</a>
+      <a href="#chat"         data-view="chat">Chat</a>
+      <a href="#knowledge"    data-view="knowledge">Knowledge</a>
+      <a href="#agents"       data-view="agents">Agents</a>
+      <a href="#integrations" data-view="integrations">Integrations</a>
+      <a href="#workspace"    data-view="workspace">Workspace</a>
+      <a href="#settings"     data-view="settings">Settings</a>
+    </div>
+    <div class="nav-footer mono">
+      <span class="badge" id="conn-badge">OFFLINE</span>
+      <span class="badge" id="status-badge">—</span>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- ================= DASHBOARD ================= -->
+    <section class="view" id="view-dashboard">
+      <header class="view-header">
+        <div>
+          <h1 class="greeting">Good morning, Sujay.</h1>
+          <p class="sub mono" id="dash-status-line">SYSTEM STANDBY</p>
+        </div>
+        <div class="dash-orb-glyph" aria-hidden="true"><i></i></div>
+      </header>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <span class="stat-label">Date</span>
+          <span class="stat-value mono" id="stat-date">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Tasks today</span>
+          <span class="stat-value mono" id="stat-tasks">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Memories</span>
+          <span class="stat-value mono" id="stat-memories">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">System</span>
+          <span class="stat-value mono" id="stat-status">—</span>
+        </div>
+      </div>
+
+      <div class="panel-grid">
+        <div class="hud-card">
+          <h2>Reminders</h2>
+          <ul class="hud-list" id="panel-reminders"><li class="empty">Nothing pending.</li></ul>
+        </div>
+        <div class="hud-card">
+          <h2>Today's schedule</h2>
+          <ul class="hud-list" id="panel-schedule"><li class="empty">No tasks scheduled today.</li></ul>
+        </div>
+        <div class="hud-card">
+          <h2>Drafts</h2>
+          <ul class="hud-list" id="panel-drafts"><li class="empty">No drafts waiting for review.</li></ul>
+        </div>
+        <div class="hud-card">
+          <h2>Memory</h2>
+          <ul class="hud-list" id="panel-memory"><li class="empty">Nothing remembered yet.</li></ul>
+        </div>
+        <div class="hud-card wide">
+          <h2>Activity</h2>
+          <ul class="hud-list" id="timeline"><li class="empty">Activity will appear here as Jatayu works.</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BATTLEGROUND ================= -->
+    <section class="view" id="view-battleground">
+      <div id="bg-host" aria-hidden="true"></div>
+
+      <div class="bg-hud">
+        <header class="bg-title">
+          <h1>JATAYU</h1>
+          <p class="bg-subtitle mono" id="bg-status-line">ADVANCED AGI — STANDBY</p>
+        </header>
+
+        <aside class="bg-telemetry mono" aria-label="System telemetry">
+          <div><span class="t-key">SYSTEM PROTOCOL</span><span class="t-val">JATAYU</span></div>
+          <div><span class="t-key">COGNITIVE NETWORK</span><span class="t-val" id="bg-ws-status">OFFLINE</span></div>
+          <div><span class="t-key">SHRI YANTRA CORE</span><span class="t-val" id="bg-core-status">STANDBY</span></div>
+          <div><span class="t-key">MODEL</span><span class="t-val" id="bg-model">—</span></div>
+          <div><span class="t-key">TOOLS</span><span class="t-val" id="bg-tools">—</span></div>
+          <div><span class="t-key">KILL SWITCH</span><span class="t-val" id="bg-kill">—</span></div>
+        </aside>
+
+        <aside class="bg-clusters mono" aria-label="Wing registry">
+          <div class="bg-clusters-title">WING REGISTRY</div>
+          <div class="bg-cluster" data-cluster="google"><i class="dot"></i>GOOGLE WORKSPACE</div>
+          <div class="bg-cluster" data-cluster="comms"><i class="dot"></i>COMMUNICATION</div>
+          <div class="bg-cluster" data-cluster="knowledge"><i class="dot"></i>KNOWLEDGE</div>
+          <div class="bg-cluster" data-cluster="voice"><i class="dot"></i>VOICE</div>
+        </aside>
+
+        <div class="bg-stage-bottom">
+          <div class="bg-transcript" aria-live="polite">
+            <p class="bg-user-line" id="bg-user-line"></p>
+            <p class="bg-assistant-text" id="bg-assistant-text"></p>
+          </div>
+          <p class="bg-voice-status" id="bg-voice-status">Tap the orb to speak</p>
+        </div>
+
+        <button id="orb-button" aria-label="Talk to Jatayu"></button>
+
+        <footer class="bg-footer mono">
+          <span id="bg-model-footer">—</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ================= CHAT ================= -->
+    <section class="view" id="view-chat">
+      <div class="chat-layout">
+        <aside class="chat-sidebar">
+          <button class="btn primary" id="btn-new-chat">New chat</button>
+          <input class="chat-search" id="chat-search" type="search" placeholder="Search (coming soon)" disabled />
+          <ul class="conv-list" id="conv-list"></ul>
+        </aside>
+        <div class="chat-main">
+          <div class="chat-thread" id="chat-thread">
+            <div class="chat-empty" id="chat-empty">
+              <p>Ask anything, or give Jatayu something to do.</p>
+            </div>
+          </div>
+          <div class="chat-input-bar">
+            <textarea id="chat-input" rows="1" placeholder="Message Jatayu…"></textarea>
+            <button class="btn icon" id="btn-chat-mic" aria-label="Record voice message">●</button>
+            <button class="btn primary" id="btn-chat-send">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= KNOWLEDGE ================= -->
+    <section class="view" id="view-knowledge">
+      <header class="view-header"><h1>Knowledge</h1></header>
+      <div class="hud-card">
+        <h2>Vault</h2>
+        <p class="empty-state">No documents indexed yet. Connected sources — Obsidian, Notion, AnythingLLM — will surface here.</p>
+      </div>
+    </section>
+
+    <!-- ================= AGENTS ================= -->
+    <section class="view" id="view-agents">
+      <header class="view-header"><h1>Agents</h1></header>
+      <div class="hud-card">
+        <h2>Sub-agent registry</h2>
+        <ul class="hud-list" id="agents-list"><li class="empty">Loading agents…</li></ul>
+      </div>
+    </section>
+
+    <!-- ================= INTEGRATIONS ================= -->
+    <section class="view" id="view-integrations">
+      <header class="view-header"><h1>Integrations</h1></header>
+      <div class="hud-card">
+        <h2>Plugins</h2>
+        <ul class="hud-list" id="plugins-list"><li class="empty">Loading plugins…</li></ul>
+      </div>
+    </section>
+
+    <!-- ================= WORKSPACE ================= -->
+    <section class="view" id="view-workspace">
+      <header class="view-header"><h1>Workspace</h1></header>
+      <div class="panel-grid">
+        <div class="hud-card">
+          <h2>Reminders</h2>
+          <ul class="hud-list" id="ws-reminders"><li class="empty">Nothing pending.</li></ul>
+        </div>
+        <div class="hud-card">
+          <h2>Today's schedule</h2>
+          <ul class="hud-list" id="ws-schedule"><li class="empty">No tasks scheduled today.</li></ul>
+        </div>
+        <div class="hud-card">
+          <h2>Drafts</h2>
+          <ul class="hud-list" id="ws-drafts"><li class="empty">No drafts waiting for review.</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section class="view" id="view-settings">
+      <header class="view-header"><h1>Settings</h1></header>
+      <div class="hud-card">
+        <h2>Organization</h2>
+        <dl class="def-list mono" id="settings-info"><dt>Loading…</dt></dl>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
